@@ -1,0 +1,11 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: venture-service
+  kafka:
+    bootstrap-servers: localhost:9092
+  datasource:
+    url: jdbc:postgresql://localhost:5432/capitalos
+    username: capitalos
+    password: capitalos

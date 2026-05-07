@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: AlgoForce CapitalOS API
+  version: 0.1.0
+paths:
+  /auth/sign-in:
+    post:
+      summary: Sign in founder and return a session token.
+      responses:
+        "200":
+          description: Session established.
+  /ventures:
+    post:
+      summary: Create a Venture Object.
+      responses:
+        "201":
+          description: VentureCreatedEvent emitted.
+  /ventures/{ventureId}:
+    get:
+      summary: Fetch the full Venture Object read model.
+      parameters:
+        - name: ventureId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Venture Object.
+  /ventures/{ventureId}/validate:
+    post:
+      summary: Validate idea, capital, and genome thresholds.
+      responses:
+        "200":
+          description: VentureValidatedEvent emitted.
+        "409":
+          description: TransitionBlockedEvent emitted.
+  /ventures/{ventureId}/blueprint:
+    post:
+      summary: Generate MVP blueprint and architecture outputs.
+      responses:
+        "200":
+          description: BlueprintGeneratedEvent emitted.
+  /execution/{ventureId}/start-mvp:
+    post:
+      summary: Start forced MVP build pipeline.
+      responses:
+        "200":
+          description: MVPBuildStartedEvent emitted.
+  /execution/{ventureId}/tasks/{taskKey}/evidence:
+    post:
+      summary: Submit evidence against execution task.
+      responses:
+        "200":
+          description: Task updated or MilestoneCompletedEvent emitted.
+  /equity/{ventureId}:
+    get:
+      summary: Fetch calculated equity structure and ledger.
+      responses:
+        "200":
+          description: Equity structure.
+  /equity/{ventureId}/process-unlocks:
+    post:
+      summary: Process cliff and milestone unlock rules.
+      responses:
+        "200":
+          description: EquityUpdatedEvent emitted.
+  /intelligence/{ventureId}/genome:
+    post:
+      summary: Recompute Startup Genome and return transition effects.
+      responses:
+        "200":
+          description: IntelligenceRecomputedEvent emitted.
+  /finance/{ventureId}/valuation:
+    post:
+      summary: Update valuation simulation and capital model.
+      responses:
+        "200":
+          description: FinancialModelUpdatedEvent emitted.

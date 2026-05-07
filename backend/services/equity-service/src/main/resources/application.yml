@@ -1,0 +1,9 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: equity-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/capitalos
+    username: capitalos
+    password: capitalos

@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  founder
+  investor
+  builder
+  admin
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+model User {
+  id              String           @id @default(cuid())
+  name            String
+  email           String           @unique
+  passwordHash    String
+  role            Role
+  trustScore      Int              @default(80)
+  startups        Startup[]        @relation("FounderStartups")
+  assignedTasks   Task[]           @relation("AssignedTasks")
+  investments     Investment[]     @relation("InvestorInvestments")
+  builderProfile  BuilderProfile?
+  events          EventLog[]       @relation("ActorEvents")
+  notifications   Notification[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Startup {
+  id           String       @id @default(cuid())
+  founderId    String
+  founder      User         @relation("FounderStartups", fields: [founderId], references: [id], onDelete: Cascade)
+  name         String
+  idea         String
+  status       String
+  fundingStage String       @default("BOOTSTRAPPED")
+  marketScore  Int          @default(50)
+  teamStrength Int          @default(50)
+  tasks        Task[]
+  investments  Investment[]
+  events       EventLog[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Task {
+  id          String      @id @default(cuid())
+  startupId   String
+  startup     Startup     @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  title       String
+  status      TaskStatus  @default(TODO)
+  assignedTo  String?
+  assignee    User?       @relation("AssignedTasks", fields: [assignedTo], references: [id], onDelete: SetNull)
+  evidenceUrl String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Investment {
+  id         String   @id @default(cuid())
+  investorId String
+  investor   User     @relation("InvestorInvestments", fields: [investorId], references: [id], onDelete: Cascade)
+  startupId  String
+  startup    Startup  @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  amount     Int
+  createdAt  DateTime @default(now())
+}
+
+model EventLog {
+  id        String   @id @default(cuid())
+  type      String
+  payload   Json
+  actorId   String?
+  actor     User?    @relation("ActorEvents", fields: [actorId], references: [id], onDelete: SetNull)
+  startupId String?
+  startup   Startup? @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  timestamp DateTime @default(now())
+}
+
+model BuilderProfile {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills    Json
+  rating    Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  payload   Json
+  createdAt DateTime @default(now())
+}
