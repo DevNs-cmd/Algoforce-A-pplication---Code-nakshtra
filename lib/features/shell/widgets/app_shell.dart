@@ -33,6 +33,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _focusNode = FocusNode();
   late final ValueNotifier<bool> _sidebarCollapsed;
+  static const _desktopContentMaxWidth = 1360.0;
 
   static const _screenRoutes = [
     '/',
@@ -212,7 +213,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                     onNotificationsPressed: () =>
                         showNotificationsPanel(context, ref),
                   ),
-                  Expanded(child: widget.navigationShell),
+                  Expanded(child: _contentPane()),
                 ],
               ),
             ),
@@ -252,7 +253,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                     onNotificationsPressed: () =>
                         showNotificationsPanel(context, ref),
                   ),
-                  Expanded(child: widget.navigationShell),
+                  Expanded(child: _contentPane(constrainWidth: true)),
                 ],
               ),
             ),
@@ -272,6 +273,27 @@ class _AppShellState extends ConsumerState<AppShell> {
       return;
     }
     context.go(route);
+  }
+
+  Widget _contentPane({bool constrainWidth = false}) {
+    if (!constrainWidth) {
+      return widget.navigationShell;
+    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth > _desktopContentMaxWidth
+            ? _desktopContentMaxWidth
+            : constraints.maxWidth;
+        return Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            width: width,
+            height: constraints.maxHeight,
+            child: widget.navigationShell,
+          ),
+        );
+      },
+    );
   }
 
   bool _isBranchRoot(String route) {

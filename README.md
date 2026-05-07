@@ -10,8 +10,21 @@ AlgoForce AI is a Flutter startup execution operating system for managing builde
 
 > Train builders, build products, verify founders, and track the venture flywheel from one operating dashboard.
 
+## Install on Android
+
+Download the latest APK from this repository:
+
+```text
+dist/algoforce-ai-release.apk
+```
+
+[Download AlgoForce AI APK](dist/algoforce-ai-release.apk)
+
+To install on a phone, copy the APK to your Android device, open it from the file manager, allow installation from that source if prompted, and tap **Install**.
+
 ## Table of Contents
 
+- [Install on Android](#install-on-android)
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -19,6 +32,7 @@ AlgoForce AI is a Flutter startup execution operating system for managing builde
 - [Getting Started - Prerequisites](#getting-started---prerequisites)
 - [Installation - Exact Steps](#installation---exact-steps)
 - [Build for Production](#build-for-production)
+- [Install APK on Android](#install-apk-on-android)
 - [Authentication](#authentication)
 - [Navigation](#navigation)
 - [State Management](#state-management)
@@ -565,11 +579,51 @@ flutter build web --release
 flutter build apk --release
 ```
 
+Release APK output:
+
+```text
+build/app/outputs/flutter-apk/app-release.apk
+```
+
+The repository also includes a distributable Android installer:
+
+```text
+dist/algoforce-ai-release.apk
+```
+
 ```bash
 flutter build ipa
 ```
 
 No macOS production command is listed because this repository does not contain a `macos/` folder.
+
+## Install APK on Android
+
+Android users can install the app directly from the release APK included in this repository:
+
+```text
+dist/algoforce-ai-release.apk
+```
+
+To install by file transfer:
+
+1. Copy `dist/algoforce-ai-release.apk` to the Android phone.
+2. Open the APK from the phone's file manager.
+3. Allow installation from the browser or file manager if Android prompts for permission.
+4. Tap **Install**.
+
+To install from a development machine with ADB:
+
+```bash
+adb install -r dist/algoforce-ai-release.apk
+```
+
+To rebuild the APK before sharing:
+
+```bash
+flutter build apk --release
+cp build/app/outputs/flutter-apk/app-release.apk dist/algoforce-ai-release.apk
+```
 
 ## Authentication
 

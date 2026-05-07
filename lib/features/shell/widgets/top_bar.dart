@@ -43,141 +43,167 @@ class TopBar extends ConsumerWidget {
         !mobile &&
         MediaQuery.sizeOf(context).width >= Breakpoints.tablet &&
         breadcrumbs.length > 1;
-    final content = Container(
-      height: showBreadcrumbs ? 82 : 56,
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        border: Border(bottom: BorderSide(color: AppColors.border)),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 55,
-            child: Row(
-              children: [
-                if (GoRouter.of(context).canPop())
-                  Tooltip(
-                    message: 'Go back',
-                    child: IconButton(
-                      onPressed: () => GoRouter.of(context).pop(),
-                      icon: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 18,
-                        color: AppColors.navy,
-                      ),
-                    ),
-                  ),
-                if (mobile) ...[
-                  const LogoWidget(compact: true),
-                  const SizedBox(width: 10),
-                ],
-                Flexible(
-                  child: Text(
-                    nav.topBarTitle,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.heading(size: 16, color: AppColors.navy3),
-                  ).animate().fadeIn(delay: 200.ms, duration: 200.ms),
-                ),
-                if (!mobile) ...[
-                  const SizedBox(width: 10),
-                  TagPill(label: nav.topBarTag),
-                ],
-                const Spacer(),
-                Tooltip(
-                  message: themeMode == ThemeMode.dark
-                      ? 'Switch to light mode'
-                      : 'Switch to dark mode',
-                  child: IconButton(
-                    onPressed: () =>
-                        ref.read(themeModeProvider.notifier).toggle(),
-                    icon: Icon(
-                      themeMode == ThemeMode.dark
-                          ? Icons.light_mode_rounded
-                          : Icons.dark_mode_rounded,
-                    ),
-                  ),
-                ),
-                Tooltip(
-                  message: 'Search',
-                  child: IconButton(
-                    onPressed: onSearchPressed,
-                    icon: const Icon(Icons.search_rounded),
-                  ),
-                ),
-                Tooltip(
-                  message: 'Notifications',
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      IconButton(
-                        onPressed: onNotificationsPressed,
-                        icon: const Icon(Icons.notifications_none_rounded),
-                      ),
-                      if (unread > 0)
-                        Positioned(
-                          right: 6,
-                          top: 6,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 5,
-                              vertical: 1,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: AppColors.verified,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              unread > 9 ? '9+' : '$unread',
-                              style: AppText.body(
-                                size: 9,
-                                color: AppColors.white,
-                                weight: FontWeight.w800,
-                              ),
-                            ),
+    final content = LayoutBuilder(
+      builder: (context, constraints) {
+        final showTextActions =
+            !mobile && constraints.maxWidth >= Breakpoints.desktop;
+        return Container(
+          height: showBreadcrumbs ? 82 : 56,
+          decoration: const BoxDecoration(
+            color: AppColors.white,
+            border: Border(bottom: BorderSide(color: AppColors.border)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 55,
+                child: Row(
+                  children: [
+                    if (GoRouter.of(context).canPop())
+                      Tooltip(
+                        message: 'Go back',
+                        child: IconButton(
+                          onPressed: () => GoRouter.of(context).pop(),
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 18,
+                            color: AppColors.navy,
                           ),
                         ),
+                      ),
+                    if (mobile) ...[
+                      const LogoWidget(compact: true),
+                      const SizedBox(width: 10),
                     ],
-                  ),
+                    Flexible(
+                      child: Text(
+                        nav.topBarTitle,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.heading(
+                          size: 16,
+                          color: AppColors.navy3,
+                        ),
+                      ).animate().fadeIn(delay: 200.ms, duration: 200.ms),
+                    ),
+                    if (!mobile) ...[
+                      const SizedBox(width: 10),
+                      if (constraints.maxWidth >= Breakpoints.tablet)
+                        TagPill(label: nav.topBarTag),
+                    ],
+                    const Spacer(),
+                    Tooltip(
+                      message: themeMode == ThemeMode.dark
+                          ? 'Switch to light mode'
+                          : 'Switch to dark mode',
+                      child: IconButton(
+                        onPressed: () =>
+                            ref.read(themeModeProvider.notifier).toggle(),
+                        icon: Icon(
+                          themeMode == ThemeMode.dark
+                              ? Icons.light_mode_rounded
+                              : Icons.dark_mode_rounded,
+                        ),
+                      ),
+                    ),
+                    Tooltip(
+                      message: 'Search',
+                      child: IconButton(
+                        onPressed: onSearchPressed,
+                        icon: const Icon(Icons.search_rounded),
+                      ),
+                    ),
+                    Tooltip(
+                      message: 'Notifications',
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          IconButton(
+                            onPressed: onNotificationsPressed,
+                            icon: const Icon(Icons.notifications_none_rounded),
+                          ),
+                          if (unread > 0)
+                            Positioned(
+                              right: 6,
+                              top: 6,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 1,
+                                ),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.verified,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  unread > 9 ? '9+' : '$unread',
+                                  style: AppText.body(
+                                    size: 9,
+                                    color: AppColors.white,
+                                    weight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (mobile)
+                      Tooltip(
+                        message: 'Open navigation',
+                        child: IconButton(
+                          onPressed: onMenuPressed,
+                          icon: const Icon(Icons.menu_rounded),
+                        ),
+                      )
+                    else if (showTextActions) ...[
+                      const SizedBox(width: 8),
+                      if (nav.currentRoute == '/revenue')
+                        GhostButton(
+                          label: 'Export Model',
+                          icon: Icons.download_rounded,
+                          onPressed: () =>
+                              _handleGhost(context, nav.currentRoute),
+                        )
+                      else
+                        GhostButton(
+                          label: nav.ghostLabel,
+                          icon: Icons.tune_rounded,
+                          onPressed: () =>
+                              _handleGhost(context, nav.currentRoute),
+                        ),
+                      const SizedBox(width: 10),
+                      PrimaryButton(
+                        label: nav.primaryLabel,
+                        icon: Icons.arrow_forward_rounded,
+                        onPressed: () =>
+                            _handlePrimary(context, nav.currentRoute),
+                      ),
+                    ] else if (!mobile) ...[
+                      const SizedBox(width: 4),
+                      Tooltip(
+                        message: nav.primaryLabel,
+                        child: IconButton.filled(
+                          onPressed: () =>
+                              _handlePrimary(context, nav.currentRoute),
+                          icon: const Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                if (mobile)
-                  Tooltip(
-                    message: 'Open navigation',
-                    child: IconButton(
-                      onPressed: onMenuPressed,
-                      icon: const Icon(Icons.menu_rounded),
-                    ),
-                  )
-                else if (MediaQuery.sizeOf(context).width > 720) ...[
-                  const SizedBox(width: 8),
-                  if (nav.currentRoute == '/revenue')
-                    GhostButton(
-                      label: 'Export Model',
-                      icon: Icons.download_rounded,
-                      onPressed: () => _handleGhost(context, nav.currentRoute),
-                    )
-                  else
-                    GhostButton(
-                      label: nav.ghostLabel,
-                      icon: Icons.tune_rounded,
-                      onPressed: () => _handleGhost(context, nav.currentRoute),
-                    ),
-                  const SizedBox(width: 10),
-                  PrimaryButton(
-                    label: nav.primaryLabel,
-                    icon: Icons.arrow_forward_rounded,
-                    onPressed: () => _handlePrimary(context, nav.currentRoute),
-                  ),
-                ],
-              ],
-            ),
+              ),
+              if (showBreadcrumbs)
+                BreadcrumbTrail(segments: breadcrumbs)
+              else
+                const SizedBox.shrink(),
+            ],
           ),
-          if (showBreadcrumbs)
-            BreadcrumbTrail(segments: breadcrumbs)
-          else
-            const SizedBox.shrink(),
-        ],
-      ),
+        );
+      },
     );
     if (MediaQuery.of(context).disableAnimations) {
       return content;
